@@ -13,7 +13,7 @@ void* print(void* input) {
   int nbthread = ((struct args*)input)->nbthread;
   //cout<<"I am thread " <<(long)num<< " in "<<(int)nbthread;
 
-  printf("I am thread %i in %i", num, nbthread);
+  printf("I am thread %i in %i\n", num, nbthread);
 
   return NULL;
 }
