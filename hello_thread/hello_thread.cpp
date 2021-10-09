@@ -2,12 +2,17 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-void* print(void* args) {
+struct args {
+  long arg1;
+  int long2;
+}
+
+void* print(void* arguments) {
 
   struct arg_struct *args = arguments
 
-  long num = arguments->arg1;
-  int nbthread = arguments->arg2;
+  long num = args->arg1;
+  int nbthread = args->arg2;
   cout<<"I am thread " <<(long)num<< " in "<<(int)nbthread;
   return NULL;
 }
