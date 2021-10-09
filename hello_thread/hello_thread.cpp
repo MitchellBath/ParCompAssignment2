@@ -37,7 +37,7 @@ int main (int argc, char* argv[]) {
     pthread_create(&hellothreads[i], NULL, print,(void*)arguments);
   }
   for (int i = 0; i < threadcount; i++) {
-    pthread_join(hellothreads[i], NULL));
+    pthread_join(hellothreads[i], NULL);
   }
   
   return 0;
