@@ -26,7 +26,7 @@ int n;
 
 struct args {
 
-  int f;
+  int functionid;
   float a;
   float b;
   int start;
@@ -131,7 +131,7 @@ int main (int argc, char* argv[]) {
 
   // New arguments for parallelization
   int nbthreads = atoi(argv[6]);
-  char* sync = atoi(argv[7]);
+  char* sync = argv[7];
   //printf("funcid:%i, a:%i, b:%i, n:%i, int:%i", function_id, a, b, n, intensity); 10 intensity?
 
   if(n<nbthreads) nbthreads = n; // Too many threads?
@@ -158,7 +158,7 @@ int main (int argc, char* argv[]) {
       if (i + divide >= nbthreads) threadargs[i].end = n; // Throw on extra threads for uneven n
       threadargs[i].intensity = intensity;
 
-      pthread_create(&threads[i], NULL, thread_calc_numerical_integration, (void*)*threadargs[i]);
+      pthread_create(&threads[i], NULL, thread_calc_numerical_integration, (void*)&threadargs[i]);
 
     }
   }
@@ -172,7 +172,7 @@ int main (int argc, char* argv[]) {
       if (i + divide >= nbthreads) threadargs[i].end = n; // Throw on extra threads for uneven n
       threadargs[i].intensity = intensity;
 
-      pthread_create(&threads[i], NULL, iteration_calc_numerical_integration, (void*)*threadargs[i]);
+      pthread_create(&threads[i], NULL, iteration_calc_numerical_integration, (void*)&threadargs[i]);
 
     }
   }
