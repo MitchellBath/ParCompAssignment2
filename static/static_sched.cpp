@@ -7,14 +7,15 @@
 #include <math.h>
 #include <time.h>
 
+using namespace std;
 #ifdef __cplusplus
 extern "C" {
 #endif
 
-//float f1(float x, int intensity);
-//float f2(float x, int intensity);
-//float f3(float x, int intensity);
-//float f4(float x, int intensity);
+float f1(float x, int intensity);
+float f2(float x, int intensity);
+float f3(float x, int intensity);
+float f4(float x, int intensity);
 // Old functions. Undefined reference to f1/f2/f3/f4 when make
 
 #ifdef __cplusplus
