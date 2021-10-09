@@ -4,6 +4,8 @@
 #include <string.h>
 #include <chrono>
 #include <cmath>
+#include <math.h>
+#include <time.h>
 
 #ifdef __cplusplus
 extern "C" {
