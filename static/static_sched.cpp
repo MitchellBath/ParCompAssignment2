@@ -17,6 +17,16 @@ extern "C" {
 //float f4(float x, int intensity);
 // Old functions. Undefined reference to f1/f2/f3/f4 when make
 
+#ifdef __cplusplus
+}
+#endif
+
+// Mutex and mutex resource sum
+pthread_mutex_t mutex;
+float sum = 0.0;
+
+int n;
+
 float f1(float x, int intensity) {
   int sign = x > 0;
   
@@ -39,17 +49,6 @@ float f3(float x, int intensity) {
 float f4(float x, int intensity) {
   return exp(cos(f1(x,intensity)));
 }
-
-
-#ifdef __cplusplus
-}
-#endif
-
-// Mutex and mutex resource sum
-pthread_mutex_t mutex;
-float sum = 0.0;
-
-int n;
 
 struct args {
 
