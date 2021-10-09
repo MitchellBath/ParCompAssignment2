@@ -36,7 +36,7 @@ struct args {
 
 }*threadargs;
 
-double iteration_calc_numerical_integration(void* arguments) {
+void* iteration_calc_numerical_integration(void* arguments) {
 
     struct args *params = (struct args *)arguments;
 
@@ -77,7 +77,7 @@ double iteration_calc_numerical_integration(void* arguments) {
     return sum;
 }
 
-double thread_calc_numerical_integration(void* arguments){
+void* thread_calc_numerical_integration(void* arguments){
 
     struct args *params = (struct args *)arguments;
 
@@ -182,7 +182,7 @@ int main (int argc, char* argv[]) {
   }
 
   float total = 0;
-  results[nbthreads];
+  float results[nbthreads];
   for(int i = 0; i < nbthreads; i++) {
       pthread_join(threads[i], results[i]);
   }
