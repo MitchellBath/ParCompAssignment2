@@ -2,9 +2,9 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-void* print(void* text) {
+void* print(void* num) {
 
-  cout<<"I am thread " <<(long)p<< " in nbthreads"<<endl;
+  cout<<"I am thread " <<(long)num<< " in nbthreads"<<endl;
   return NULL;
 }
 
