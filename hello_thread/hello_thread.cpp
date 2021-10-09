@@ -5,11 +5,11 @@
 struct args {
   long arg1;
   int long2;
-}
+};
 
 void* print(void* arguments) {
 
-  struct arg_struct *args = arguments
+  struct arg_struct *args = arguments;
 
   long num = args->arg1;
   int nbthread = args->arg2;
@@ -35,9 +35,6 @@ int main (int argc, char* argv[]) {
   }
   for (long i = 0; i < threadcount; i++) {
     pthread_join(hellothreads[i], NULL));
-  }
-
-
   }
   
   return 0;
