@@ -183,7 +183,7 @@ int main (int argc, char* argv[]) {
   }
 
   float total = 0;
-  void* results[nbthreads];
+  float results[nbthreads];
   for(int i = 0; i < nbthreads; i++) {
       pthread_join(threads[i], NULL);
       results[i] = threadargs[i].threadsum;
