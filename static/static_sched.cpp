@@ -41,7 +41,7 @@ void* iteration_calc_numerical_integration(void* arguments) {
     struct args *params = (struct args *)arguments;
 
     // floats?
-    int functionid = params->f;
+    int functionid = params->functionid;
     int a = params->a;
     int b = params->b;
     int start = params->start;
@@ -74,7 +74,7 @@ void* iteration_calc_numerical_integration(void* arguments) {
     }
 
     // Return NULL? Mutex violation maybe here
-    return sum;
+    return (void*)sum;
 }
 
 void* thread_calc_numerical_integration(void* arguments){
@@ -82,7 +82,7 @@ void* thread_calc_numerical_integration(void* arguments){
     struct args *params = (struct args *)arguments;
 
     // floats?
-    int functionid = params->f;
+    int functionid = params->functionid;
     int a = params->a;
     int b = params->b;
     int start = params->start;
@@ -112,7 +112,7 @@ void* thread_calc_numerical_integration(void* arguments){
         summation += f(a + (i+.5)*(((float)b-(float)a)/(float)n), intensity);
     }
 
-    return summation;
+    return (void*)summation;
 }
 
 int main (int argc, char* argv[]) {
@@ -182,7 +182,7 @@ int main (int argc, char* argv[]) {
   }
 
   float total = 0;
-  float results[nbthreads];
+  void* results[nbthreads];
   for(int i = 0; i < nbthreads; i++) {
       pthread_join(threads[i], results[i]);
   }
