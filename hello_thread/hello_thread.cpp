@@ -4,8 +4,10 @@
 
 void* print(void* args) {
 
-  long num = args->arg1;
-  int nbthread = args->arg2;
+  struct arg_struct *args = arguments
+
+  long num = arguments->arg1;
+  int nbthread = arguments->arg2;
   cout<<"I am thread " <<(long)num<< " in "<<(int)nbthread;
   return NULL;
 }
