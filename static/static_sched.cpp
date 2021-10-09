@@ -22,6 +22,8 @@ float f4(float x, int intensity);
 pthread_mutex_t mutex;
 float sum = 0.0;
 
+int n;
+
 struct args {
 
   int f;
@@ -32,11 +34,11 @@ struct args {
   int intensity;
   float threadsum;
 
-};
+}*threadargs;
 
 double iteration_calc_numerical_integration(void* arguments) {
 
-    struct args *argsnow = (struct args *)arguments;
+    struct args *params = (struct args *)arguments;
 
     // floats?
     int functionid = params->f;
@@ -65,7 +67,7 @@ double iteration_calc_numerical_integration(void* arguments) {
 
     for (int i = start; i < end; i++) {
 
-        compute = f(a + (i+.5)*(((float)b-(float)a)/(float)n), intensity);
+        double compute = f(a + (i+.5)*(((float)b-(float)a)/(float)n), intensity);
         pthread_mutex_lock(&mutex);
         sum += compute;
         pthread_mutex_unlock(&mutex);
@@ -124,7 +126,7 @@ int main (int argc, char* argv[]) {
   int function_id = atoi(argv[1]);
   int a = atoi(argv[2]);
   int b = atoi(argv[3]);
-  int n = atoi(argv[4]);
+  n = atoi(argv[4]);
   int intensity = atoi(argv[5]);
 
   // New arguments for parallelization
@@ -143,7 +145,7 @@ int main (int argc, char* argv[]) {
   clock_t t; // t represents clock ticks which is of type 'clock_t'
   t = clock(); // start clock
 
-  outside = ((float)b - (float)a)/(float)n;
+  float outside = ((float)b - (float)a)/(float)n;
   // multiply thread result with outside
 
   if(strcmp(sync, "thread")==0) {
@@ -175,16 +177,16 @@ int main (int argc, char* argv[]) {
     }
   }
   else {
-    cout<<"Invalid input (sync)";
+    printf("Invalid input (sync)");
     return 0;
   }
 
   float total = 0;
+  results[nbthreads];
   for(int i = 0; i < nbthreads; i++) {
       pthread_join(threads[i], results[i]);
   }
   // Results are for thread, not iteration
-  results[nbthreads];
   if(strcmp(sync, "thread")==0){
     for(int i = 0; i < nbthreads; i++) {
         total += results[i];
