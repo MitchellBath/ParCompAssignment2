@@ -6,6 +6,8 @@
 #include <cmath>
 #include <math.h>
 #include <time.h>
+#include <pthread.h>
+#include <mutex>
 
 using namespace std;
 #ifdef __cplusplus
