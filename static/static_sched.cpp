@@ -14,10 +14,10 @@ using namespace std;
 extern "C" {
 #endif
 
-float f1(float x, int intensity);
-float f2(float x, int intensity);
-float f3(float x, int intensity);
-float f4(float x, int intensity);
+  float f1(float x, int intensity);
+  float f2(float x, int intensity);
+  float f3(float x, int intensity);
+  float f4(float x, int intensity);
 // Old functions. Undefined reference to f1/f2/f3/f4 when make
 
 #ifdef __cplusplus
@@ -30,7 +30,7 @@ float sum = 0.0;
 
 int n;
 
-/*
+// Undefined reference to functions so I manually added them here
 float f1(float x, int intensity) {
   int sign = x > 0;
   
@@ -53,7 +53,6 @@ float f3(float x, int intensity) {
 float f4(float x, int intensity) {
   return exp(cos(f1(x,intensity)));
 }
-*/
 
 struct args {
 
@@ -192,7 +191,7 @@ int main (int argc, char* argv[]) {
   // New arguments for parallelization
   int nbthreads = atoi(argv[6]);
   char* sync = argv[7];
-  //printf("funcid:%i, a:%i, b:%i, n:%i, int:%i", function_id, a, b, n, intensity); 10 intensity?
+  printf("funcid:%i, a:%i, b:%i, n:%i, int:%i", function_id, a, b, n, intensity);//10 intensity?
 
   if(n<nbthreads) nbthreads = n; // Too many threads?
   int divide = n/nbthreads;
