@@ -11,8 +11,8 @@ void* print(void* input) {
 
   struct arg_struct *args = arguments;
 
-  long num = ((struct args*)input)->i);
-  int nbthread = ((struct args*)input)->nbthread);
+  long num = ((struct args*)input)->i;
+  int nbthread = ((struct args*)input)->nbthread;
   cout<<"I am thread " <<(long)num<< " in "<<(int)nbthread;
   return NULL;
 }
