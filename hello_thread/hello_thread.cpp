@@ -2,9 +2,11 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-void* print(void* num) {
+void* print(void* args) {
 
-  cout<<"I am thread " <<(long)num<< " in nbthreads"<<endl;
+  long num = args->arg1;
+  int nbthread = args->arg2;
+  cout<<"I am thread " <<(long)num<< " in "<<(int)nbthread;
   return NULL;
 }
 
@@ -21,7 +23,8 @@ int main (int argc, char* argv[]) {
   pthread_t *hellothreads = new pthread_t[threadcount];
 
   for (long i = 0; i < threadcount; i++) {
-    pthread_create(&hellothreads[i], NULL, print,(void*)i);
+    struct arg_struct args; args.arg1 = i; args.arg2 = threadcount;
+    pthread_create(&hellothreads[i], NULL, print,(void*)&args);
   }
   for (long i = 0; i < threadcount; i++) {
     pthread_join(hellothreads[i], NULL));
