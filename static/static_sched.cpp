@@ -98,19 +98,19 @@ void* iteration_calc_numerical_integration(void* arguments) {
     for (int i = start; i < end; i++) {
 
         //double compute = f(a + (i+.5)*(((float)b-(float)a)/(float)n), intensity);
-
+        double compute;
       switch(functionid) {
         case 1:
-          double compute = f1(a + (i+.5)*(((float)b-(float)a)/(float)n), intensity);
+          compute = f1(a + (i+.5)*(((float)b-(float)a)/(float)n), intensity);
         break;
         case 2:
-          double compute = f2(a + (i+.5)*(((float)b-(float)a)/(float)n), intensity);
+          compute = f2(a + (i+.5)*(((float)b-(float)a)/(float)n), intensity);
         break;
         case 3:
-          double compute = f3(a + (i+.5)*(((float)b-(float)a)/(float)n), intensity);
+          compute = f3(a + (i+.5)*(((float)b-(float)a)/(float)n), intensity);
         break;
         case 4:
-          double compute = f4(a + (i+.5)*(((float)b-(float)a)/(float)n), intensity);
+          compute = f4(a + (i+.5)*(((float)b-(float)a)/(float)n), intensity);
         break;
       }
 
