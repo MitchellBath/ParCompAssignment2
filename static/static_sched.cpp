@@ -4,12 +4,12 @@
 #include <string.h>
 #include <chrono>
 #include <cmath>
+//mine
 #include <math.h>
 #include <time.h>
 #include <pthread.h>
-#include <mutex>
-
 using namespace std;
+
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -30,6 +30,7 @@ float sum = 0.0;
 
 int n;
 
+/*
 float f1(float x, int intensity) {
   int sign = x > 0;
   
@@ -52,6 +53,7 @@ float f3(float x, int intensity) {
 float f4(float x, int intensity) {
   return exp(cos(f1(x,intensity)));
 }
+*/
 
 struct args {
 
