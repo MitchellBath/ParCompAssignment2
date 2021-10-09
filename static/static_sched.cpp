@@ -74,7 +74,7 @@ void* iteration_calc_numerical_integration(void* arguments) {
     }
 
     // Return NULL? Mutex violation maybe here
-    return (void*)sum;
+    return NULL;
 }
 
 void* thread_calc_numerical_integration(void* arguments){
@@ -112,7 +112,8 @@ void* thread_calc_numerical_integration(void* arguments){
         summation += f(a + (i+.5)*(((float)b-(float)a)/(float)n), intensity);
     }
 
-    return (void*)summation;
+    params->threadsum = summation;
+    return NULL;
 }
 
 int main (int argc, char* argv[]) {
@@ -184,7 +185,8 @@ int main (int argc, char* argv[]) {
   float total = 0;
   void* results[nbthreads];
   for(int i = 0; i < nbthreads; i++) {
-      pthread_join(threads[i], results[i]);
+      pthread_join(threads[i], NULL);
+      results[i] = threadargs[i].threadsum;
   }
   // Results are for thread, not iteration
   if(strcmp(sync, "thread")==0){
