@@ -25,7 +25,7 @@ float f4(float x, int intensity);
 #endif
 
 // Mutex and mutex resource sum
-pthread_mutex_t mutex;
+pthread_mutex_t mut;
 float sum = 0.0;
 
 int n;
@@ -97,9 +97,9 @@ void* iteration_calc_numerical_integration(void* arguments) {
     for (int i = start; i < end; i++) {
 
         double compute = f(a + (i+.5)*(((float)b-(float)a)/(float)n), intensity);
-        pthread_mutex_lock(&mutex);
+        pthread_mutex_lock(&mut);
         sum += compute;
-        pthread_mutex_unlock(&mutex);
+        pthread_mutex_unlock(&mut);
     }
 
     // Return NULL? Mutex violation maybe here
@@ -170,7 +170,7 @@ int main (int argc, char* argv[]) {
   threadargs = new args[nbthreads];
 
   pthread_t *threads = new pthread_t[nbthreads];
-  pthread_mutex_init(&mutex,NULL);
+  pthread_mutex_init(&mut,NULL);
   
   clock_t t; // t represents clock ticks which is of type 'clock_t'
   t = clock(); // start clock
