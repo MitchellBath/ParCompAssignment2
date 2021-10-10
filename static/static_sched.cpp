@@ -210,6 +210,7 @@ int main (int argc, char* argv[]) {
 
   if(strcmp(sync, "thread")==0) {
     for(int i = 0; i < n; i += divide) {
+
       threadargs[i].functionid = function_id;
       threadargs[i].a = a;
       threadargs[i].b = b;
@@ -224,15 +225,17 @@ int main (int argc, char* argv[]) {
   }
   else if(strcmp(sync, "iteration")==0) {
     for(int i = 0; i < n; i += divide) {
-      threadargs[i].functionid = function_id;
-      threadargs[i].a = a;
-      threadargs[i].b = b;
-      threadargs[i].start = i;
-      threadargs[i].end = i+divide;
-      if (i + divide >= nbthreads) threadargs[i].end = n; // Throw on extra threads for uneven n
-      threadargs[i].intensity = intensity;
+      if(n - (i + divide) >= divide) {
+        threadargs[i].functionid = function_id;
+        threadargs[i].a = a;
+        threadargs[i].b = b;
+        threadargs[i].start = i;
+        threadargs[i].end = i+divide;
+        if (i + divide >= nbthreads) threadargs[i].end = n; // Throw on extra threads for uneven n
+        threadargs[i].intensity = intensity;
 
-      pthread_create(&threads[i], NULL, iteration_calc_numerical_integration, (void*)&threadargs[i]);
+        pthread_create(&threads[i], NULL, iteration_calc_numerical_integration, (void*)&threadargs[i]);
+      }      
 
     }
   }
