@@ -130,7 +130,7 @@ void* worker(void* arguments) {
 
       pthread_mutex_lock(&mut);
       sum += compute;
-      pthread_mutex_unclock(&mut);
+      pthread_mutex_unlock(&mut);
 
     }
     return NULL;
@@ -172,7 +172,7 @@ void* worker(void* arguments) {
 
     pthread_mutex_lock(&mut);
     sum = compute;
-    pthread_mutex_unclock(&mut);
+    pthread_mutex_unlock(&mut);
 
     return NULL;
   }
