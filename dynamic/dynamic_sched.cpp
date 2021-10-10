@@ -3,6 +3,10 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+//mine
+#include <math.h>
+#include <time.h>
+using namespace std;
 
 #ifdef __cplusplus
 extern "C" {
