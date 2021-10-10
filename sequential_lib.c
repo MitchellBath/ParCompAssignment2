@@ -67,7 +67,45 @@ float sequential_integrate (int argc, char* argv[]) {
   
   for (int i = 0; i< n; ++i) {
     float x = a+(i+.5)*(b-a)/n;
-    float val = f(x, intensity);
+
+    // manual functions
+    float val;
+    if (functionid == 1) {
+        int sign = x > 0;
+      for (int i=0; i< intensity; ++i) {
+        x = x*x;
+        x = sqrt(x);
+      }
+      val = (sign?1:-1)*x;
+    }
+    if (functionid == 2) {
+      int sign = x > 0;
+      for (int i=0; i< intensity; ++i) {
+        x = x*x;
+        x = sqrt(x);
+      }
+      val = (sign?1:-1)*x;
+      val = val*val;
+    }
+    if (functionid == 3) {
+      int sign = x > 0;
+      for (int i=0; i< intensity; ++i) {
+        x = x*x;
+        x = sqrt(x);
+      }
+      val = (sign?1:-1)*x;
+      val = sin(val);
+    }
+    if (functionid == 4) {
+      int sign = x > 0;
+      for (int i=0; i< intensity; ++i) {
+        x = x*x;
+        x = sqrt(x);
+      }
+      val = (sign?1:-1)*x;
+      val = exp(cos(val));
+    }
+    //float val = f(x, intensity);
 
     //std::cout<<val<<std::endl;
 
