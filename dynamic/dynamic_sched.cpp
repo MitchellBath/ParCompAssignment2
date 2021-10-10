@@ -69,7 +69,7 @@ struct args {
   // New for dynamic, how many iterations it takes
   int granularity;
 
-}threadargs;
+}*threadargs;
 
 
 // Dynamic Stuff
@@ -92,6 +92,7 @@ void* worker(void* arguments) {
   int end = params->end;
   int intensity = params->intensity;
   int granularity = params->granularity;
+  char* sync = params->sync;
 
   segments = n/granularity;
   if(strcmp(sync, "chunk")==0) {
