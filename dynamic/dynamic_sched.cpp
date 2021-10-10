@@ -270,6 +270,7 @@ int main (int argc, char* argv[]) {
         threadargs[i].b = b;
         threadargs[i].intensity = intensity;
         threadargs[i].sync = sync;
+        threadargs[i].granularity = granularity;
 
       pthread_create(&threads[i], NULL, worker, (void*)&threadargs[i]);
 
