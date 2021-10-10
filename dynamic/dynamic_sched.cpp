@@ -3,6 +3,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <cmath>
+#include <math.h>
 
 using namespace std;
 #ifdef __cplusplus
