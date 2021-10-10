@@ -210,15 +210,14 @@ int main (int argc, char* argv[]) {
   // multiply thread result with outside
 
   if(strcmp(sync, "thread")==0) {
-    for(int i = 0; i < n; i += divide) {
-
-      threadargs[i].functionid = function_id;
-      threadargs[i].a = a;
-      threadargs[i].b = b;
-      threadargs[i].start = i;
-      threadargs[i].end = i+divide;
-      if (i + divide >= n) threadargs[i].end = n; // Throw on extra threads for uneven n
-      threadargs[i].intensity = intensity;
+    for(int i = 0; i < nbthreads; i ++) {
+        threadargs[i].functionid = function_id;
+        threadargs[i].a = a;
+        threadargs[i].b = b;
+        threadargs[i].start = divide*(i);
+        threadargs[i].end = divide*(i+1);
+        if (i + divide >= n) threadargs[i].end = n; // Throw on extra threads for uneven n
+        threadargs[i].intensity = intensity;
 
       pthread_create(&threads[i], NULL, thread_calc_numerical_integration, (void*)&threadargs[i]);
 
