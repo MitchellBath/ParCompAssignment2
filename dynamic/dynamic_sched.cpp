@@ -51,7 +51,7 @@ float f4(float x, int intensity) {
 //Mutex
 pthread_mutex_t mut, schedule_mut;
 
-float sum=0;
+float sum=0.0;
 int n;
 int segment_count, segments = 0;
 
