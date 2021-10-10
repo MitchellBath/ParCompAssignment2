@@ -17,12 +17,39 @@ float f4(float x, int intensity);
 }
 #endif
 
+// Undefined reference to functions so I manually added them here
+
+float f1(float x, int intensity) {
+  int sign = x > 0;
+  
+  for (int i=0; i< intensity; ++i) {
+    x = x*x;
+    x = sqrt(x);
+  }
+  return (sign?1:-1)*x;
+}
+
+float f2(float x, int intensity) {
+  float realx = f1(x, intensity);
+  return realx*realx;
+}
+
+float f3(float x, int intensity) {
+  return sin(f1(x,intensity));
+}
+
+float f4(float x, int intensity) {
+  return exp(cos(f1(x,intensity)));
+}
+
+
+
 //Mutex
-pthread_mutex_t iteration_mut, chunk_mut, get_mut;
+pthread_mutex_t mut, schedule_mut;
 
 float sum=0;
-int nextend, nextbegin;
 int n;
+int segment_count, segments = 0;
 
 struct args {
 
@@ -33,161 +60,16 @@ struct args {
   int end;
   int intensity;
   float threadsum;
+  char* sync;
 
   // New for dynamic, how many iterations it takes
   int granularity;
 
 }threadargs;
 
-void* iteration_calc_numerical_integration(void* arguments) {
-
-    struct args *params = (struct args *)arguments;
-
-    // floats?
-    int functionid = params->functionid;
-    int a = params->a;
-    int b = params->b;
-    int start = params->start;
-    int end = params->end;
-    int intensity = params->intensity;
-
-    float (*f)(float, int);
-    if (functionid == 1) {
-        f = f1;
-    }
-    else if (functionid == 2) {
-        f = f2;
-    }
-    else if (functionid == 3) {
-        f = f3;
-    }
-    else if (functionid == 4) {
-        f = f4;
-    } else {
-        return 0;
-    }
-
-    for (int i = start; i < end; i++) {
-
-        //double compute = f(a + (i+.5)*(((float)b-(float)a)/(float)n), intensity);
-        double compute;
-      switch(functionid) {
-        case 1:
-          compute = f1(a + (i+.5)*(((float)b-(float)a)/(float)n), intensity);
-        break;
-        case 2:
-          compute = f2(a + (i+.5)*(((float)b-(float)a)/(float)n), intensity);
-        break;
-        case 3:
-          compute = f3(a + (i+.5)*(((float)b-(float)a)/(float)n), intensity);
-        break;
-        case 4:
-          compute = f4(a + (i+.5)*(((float)b-(float)a)/(float)n), intensity);
-        break;
-      }
-
-        pthread_mutex_lock(&iteration_mut);
-        sum += compute;
-        pthread_mutex_unlock(&iteration_mut);
-    }
-
-    // Return NULL? Mutex violation maybe here
-    return NULL;
-}
-
-void* thread_calc_numerical_integration(void* arguments){
-
-    struct args *params = (struct args *)arguments;
-
-    // floats?
-    int functionid = params->functionid;
-    int a = params->a;
-    int b = params->b;
-    int start = params->start;
-    int end = params->end;
-    int intensity = params->intensity;
-
-    double summation = 0;
-
-    float (*f)(float, int);
-    if (functionid == 1) {
-        f = f1;
-    }
-    else if (functionid == 2) {
-        f = f2;
-    }
-    else if (functionid == 3) {
-        f = f3;
-    }
-    else if (functionid == 4) {
-        f = f4;
-    } else {
-        return 0;
-    }
-
-    for (int i = start; i < end; i++) {
-        //summation += f(a + (i+.5)*(((float)b-(float)a)/(float)n), intensity);
-        switch(functionid) {
-        case 1:
-          summation += f1(a + (i+.5)*(((float)b-(float)a)/(float)n), intensity);
-        break;
-        case 2:
-          summation += f2(a + (i+.5)*(((float)b-(float)a)/(float)n), intensity);
-        break;
-        case 3:
-          summation += f3(a + (i+.5)*(((float)b-(float)a)/(float)n), intensity);
-        break;
-        case 4:
-          summation += f4(a + (i+.5)*(((float)b-(float)a)/(float)n), intensity);
-        break;
-      }
-    }
-
-    params->threadsum = summation;
-    return NULL;
-}
-
-void* chunk_calc_numerical_integration(void* arguments){
-  struct args *params = (struct args *) arguments;
-
-  int functionid = params->functionid;
-  int a = params->a;
-  int b = params->b;
-  int start = params->start;
-  int end = params->end;
-  int intensity = params->intensity;
-
-  float summation = 0;
-
-  for (int i = start; i < end; i++) {
-      //summation += f(a + (i+.5)*(((float)b-(float)a)/(float)n), intensity);
-      switch(functionid) {
-      case 1:
-        summation += f1(a + (i+.5)*(((float)b-(float)a)/(float)n), intensity);
-      break;
-      case 2:
-        summation += f2(a + (i+.5)*(((float)b-(float)a)/(float)n), intensity);
-      break;
-      case 3:
-        summation += f3(a + (i+.5)*(((float)b-(float)a)/(float)n), intensity);
-      break;
-      case 4:
-        summation += f4(a + (i+.5)*(((float)b-(float)a)/(float)n), intensity);
-      break;
-      }
-  }
-
-  pthread_mutex_lock(&chunk_mut);
-  sum += summation;
-  pthread_mutex_unlock(&chunk_mut);
-
-  // Null??
-  return sum;
-
-}
 
 // Dynamic Stuff
-void* worker_chunk(void* arguments) {
+void* worker(void* arguments) {
 
   /*
     while(!loop.done) {
@@ -207,20 +89,133 @@ void* worker_chunk(void* arguments) {
   int intensity = params->intensity;
   int granularity = params->granularity;
 
-  float summation = 0;
+  segments = n/granularity;
+  if(strcmp(sync, "chunk")==0) {
+    // Store inner loop locally, add to shared variable once per call
+    while (segment_count < segments) {
 
-  bool done = false;
+      // Claim next segment of iterations
+      pthread_mutex_lock(&schedule_mut);
 
-  while(!done) {
+        start = segment_count * granularity;
+        end = start + granularity;
+        if (end > n) end = n; //Don't go over max
+        if (start > n) start = n;
 
-    int begin, end;
+        segment_count++;
 
+      pthread_mutex_unlock(&schedule_mut);
 
+      float compute = 0.0;
+      for (int i = start; i < end; i++) {
+        switch(functionid) {
+        case 1:
+          compute += f1(a + (i+.5)*(((float)b-(float)a)/(float)n), intensity);
+        break;
+        case 2:
+          compute += f2(a + (i+.5)*(((float)b-(float)a)/(float)n), intensity);
+        break;
+        case 3:
+          compute += f3(a + (i+.5)*(((float)b-(float)a)/(float)n), intensity);
+        break;
+        case 4:
+          compute += f4(a + (i+.5)*(((float)b-(float)a)/(float)n), intensity);
+        break;
+        }
+      }
+
+      pthread_mutex_lock(&mut);
+      sum += compute;
+      pthread_mutex_unclock(&mut);
+
+    }
+    return NULL;
+  }
+  else if(strcmp(sync, "thread")==0) {
+    //One value per thread, add to shared variable at the end
+    float compute = 0.0;
+    while(segment_count < segments) {
+
+      // Claim next segment of iterations
+      pthread_mutex_lock(&schedule_mut);
+
+        start = segment_count * granularity;
+        end = start + granularity;
+        if (end > n) end = n; //Don't go over max
+        if (start > n) start = n;
+
+        segment_count++;
+
+      pthread_mutex_unlock(&schedule_mut);
+
+      for (int i = start; i < end; i++) {
+        switch(functionid) {
+        case 1:
+          compute += f1(a + (i+.5)*(((float)b-(float)a)/(float)n), intensity);
+        break;
+        case 2:
+          compute += f2(a + (i+.5)*(((float)b-(float)a)/(float)n), intensity);
+        break;
+        case 3:
+          compute += f3(a + (i+.5)*(((float)b-(float)a)/(float)n), intensity);
+        break;
+        case 4:
+          compute += f4(a + (i+.5)*(((float)b-(float)a)/(float)n), intensity);
+        break;
+        }
+      }
+    }
+
+    pthread_mutex_lock(&mut);
+    sum = compute;
+    pthread_mutex_unclock(&mut);
+
+    return NULL;
+  }
+  else if(strcmp(sync, "iteration")==0) {
+    //Add to shared variable in inner loop
+    while(segment_count < segments) {
+
+      // Claim next segment of iterations
+      pthread_mutex_lock(&schedule_mut);
+
+        start = segment_count * granularity;
+        end = start + granularity;
+        if (end > n) end = n; //Don't go over max
+        if (start > n) start = n;
+
+        segment_count++;
+
+      pthread_mutex_unlock(&schedule_mut);
+
+      for (int i = start; i < end; i++) {
+        pthread_mutex_lock(&mut);
+        switch(functionid) {
+        case 1:
+          sum += f1(a + (i+.5)*(((float)b-(float)a)/(float)n), intensity);
+        break;
+        case 2:
+          sum += f2(a + (i+.5)*(((float)b-(float)a)/(float)n), intensity);
+        break;
+        case 3:
+          sum += f3(a + (i+.5)*(((float)b-(float)a)/(float)n), intensity);
+        break;
+        case 4:
+          sum += f4(a + (i+.5)*(((float)b-(float)a)/(float)n), intensity);
+        break;
+        }
+        pthread_mutex_unlock(&mut);
+      }
+    }
+    return NULL;
+  }
+  else {
+    printf("Invalid sync input");
+    return 0;
   }
 
 
 }
-
 
 
 
@@ -264,76 +259,24 @@ int main (int argc, char* argv[]) {
   float outside = ((float)b - (float)a)/(float)n;
   // multiply thread result with outside
 
-  if(strcmp(sync, "thread")==0) {
     for(int i = 0; i < nbthreads; i ++) {
         threadargs[i].functionid = function_id;
         threadargs[i].a = a;
         threadargs[i].b = b;
-        threadargs[i].start = divide*(i);
-        threadargs[i].end = divide*(i+1);
-        if (i + divide >= n) threadargs[i].end = n; // Throw on extra threads for uneven n
         threadargs[i].intensity = intensity;
+        threadargs[i].sync = sync;
 
-      pthread_create(&threads[i], NULL, thread_calc_numerical_integration, (void*)&threadargs[i]);
-
-    }
-  }
-  // Dynamic
-  else if (strcmp(sync, "chunk")==0){
-    
-    for(int i = 0; i < nbthreads; i ++) {
-        threadargs[i].functionid = function_id;
-        threadargs[i].a = a;
-        threadargs[i].b = b;
-        threadargs[i].start = divide*(i);
-        threadargs[i].end = divide*(i+1);
-        if (i + divide >= n) threadargs[i].end = n; // Throw on extra threads for uneven n
-        threadargs[i].intensity = intensity;
-        threadargs[i].granularity = granularity;
-
-      pthread_create(&threads[i], NULL, worker_chunk, (void*)&threadargs[i]);
-    }
-
-  }
-  else if(strcmp(sync, "iteration")==0) {
-    for(int i = 0; i < nbthreads; i ++) {
-        threadargs[i].functionid = function_id;
-        threadargs[i].a = a;
-        threadargs[i].b = b;
-        threadargs[i].start = divide*(i);
-        threadargs[i].end = divide*(i+1);
-        if (i + divide >= n) threadargs[i].end = n; // Throw on extra threads for uneven n
-        threadargs[i].intensity = intensity;
-
-        pthread_create(&threads[i], NULL, iteration_calc_numerical_integration, (void*)&threadargs[i]);  
+      pthread_create(&threads[i], NULL, worker, (void*)&threadargs[i]);
 
     }
-  }
-  else {
-    printf("Invalid input (sync)");
-    return 0;
-  }
+  
+  
 
-  float total = 0;
-  float results[nbthreads];
-  for(int i = 0; i < nbthreads; i++) {
-      pthread_join(threads[i], NULL);
-      results[i] = threadargs[i].threadsum;
-  }
-  // Results are for thread, not iteration
-  if(strcmp(sync, "thread")==0){
-    for(int i = 0; i < nbthreads; i++) {
-        total += results[i];
-    }
-  }
-  // Iteration result
-  else if(strcmp(sync, "iteration")==0) {
-    total = sum;
-  }
+
   // Apply product
-  total *= outside;
+  sum *= outside;
 
-  float result = total;
+  float result = sum;
   // end code
 
   std::chrono::time_point<std::chrono::system_clock> end = std::chrono::system_clock::now();
