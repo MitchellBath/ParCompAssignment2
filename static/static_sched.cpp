@@ -229,7 +229,7 @@ int main (int argc, char* argv[]) {
         threadargs[i].functionid = function_id;
         threadargs[i].a = a;
         threadargs[i].b = b;
-        threadargs[i].start = 1+divide*(i);
+        threadargs[i].start = divide*(i);
         threadargs[i].end = divide*(i+1);
         if (i + divide >= n) threadargs[i].end = n; // Throw on extra threads for uneven n
         threadargs[i].intensity = intensity;
