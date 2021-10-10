@@ -275,7 +275,9 @@ int main (int argc, char* argv[]) {
 
     }
   
-  
+  for(int i = 0; i < nbthreads; i++) {
+      pthread_join(threads[i], NULL);
+  }
 
 
   // Apply product
