@@ -196,6 +196,7 @@ int main (int argc, char* argv[]) {
 
   if(n<nbthreads) nbthreads = n; // Too many threads?
   int divide = n/nbthreads;
+  int extra = n % nbthreads;
   //if (divide*nbthreads < n) int extra = n - (divide*nbthreads); // throw on last threads for uneven n
   threadargs = new args[nbthreads];
 
@@ -224,18 +225,16 @@ int main (int argc, char* argv[]) {
     }
   }
   else if(strcmp(sync, "iteration")==0) {
-    for(int i = 0; i < n; i += divide) {
-      if(n - (i + divide) >= divide) {
+    for(int i = 0; i < nbthreads; i ++) {
         threadargs[i].functionid = function_id;
         threadargs[i].a = a;
         threadargs[i].b = b;
-        threadargs[i].start = i;
-        threadargs[i].end = i+divide;
+        threadargs[i].start = 1+divide*(i);
+        threadargs[i].end = divide*(i+1);
         if (i + divide >= n) threadargs[i].end = n; // Throw on extra threads for uneven n
         threadargs[i].intensity = intensity;
 
-        pthread_create(&threads[i], NULL, iteration_calc_numerical_integration, (void*)&threadargs[i]);
-      }      
+        pthread_create(&threads[i], NULL, iteration_calc_numerical_integration, (void*)&threadargs[i]);  
 
     }
   }
