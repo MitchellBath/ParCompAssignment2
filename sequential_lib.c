@@ -27,18 +27,6 @@ float sequential_integrate (int argc, char* argv[]) {
   float (*f) (float, int);
   f = NULL;
   
-  if (functionid == 1) {
-    f = f1;
-  }
-  if (functionid == 2) {
-    f = f2;
-  }
-  if (functionid == 3) {
-    f = f3;
-  }
-  if (functionid == 4) {
-    f = f4;
-  }
 
   double sum = 0;
   
