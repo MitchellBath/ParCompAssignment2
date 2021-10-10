@@ -191,8 +191,8 @@ int main (int argc, char* argv[]) {
   // New arguments for parallelization
   int nbthreads = atoi(argv[6]);
   char* sync = argv[7];
-  printf("funcid:%i, a:%i, b:%i, n:%i, int:%i\n", function_id, a, b, n, intensity);//10 intensity?
-  printf("threads:%i, type:%s", nbthreads, sync);
+  //printf("funcid:%i, a:%i, b:%i, n:%i, int:%i\n", function_id, a, b, n, intensity);//10 intensity?
+  //printf("threads:%i, type:%s\n", nbthreads, sync);
 
   if(n<nbthreads) nbthreads = n; // Too many threads?
   int divide = n/nbthreads;
