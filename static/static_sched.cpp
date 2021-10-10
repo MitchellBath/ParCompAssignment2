@@ -216,7 +216,7 @@ int main (int argc, char* argv[]) {
       threadargs[i].b = b;
       threadargs[i].start = i;
       threadargs[i].end = i+divide;
-      if (i + divide >= nbthreads) threadargs[i].end = n; // Throw on extra threads for uneven n
+      if (i + divide >= n) threadargs[i].end = n; // Throw on extra threads for uneven n
       threadargs[i].intensity = intensity;
 
       pthread_create(&threads[i], NULL, thread_calc_numerical_integration, (void*)&threadargs[i]);
@@ -231,7 +231,7 @@ int main (int argc, char* argv[]) {
         threadargs[i].b = b;
         threadargs[i].start = i;
         threadargs[i].end = i+divide;
-        if (i + divide >= nbthreads) threadargs[i].end = n; // Throw on extra threads for uneven n
+        if (i + divide >= n) threadargs[i].end = n; // Throw on extra threads for uneven n
         threadargs[i].intensity = intensity;
 
         pthread_create(&threads[i], NULL, iteration_calc_numerical_integration, (void*)&threadargs[i]);
